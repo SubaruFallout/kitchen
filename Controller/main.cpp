@@ -1,8 +1,8 @@
 #include <windows.h>
 #include <windowsx.h>
+#include <commctrl.h>
 
 #include <cmath>
-#include <commctrl.h>
 #include <string>
 
 #include "../Model/student_queue.h"
@@ -82,6 +82,8 @@ LRESULT MessagesHandler(
 
   static HPEN hPen;
   static HBRUSH hBrush;
+  static HWND add_student;
+  static HWND add_teacher;
 
   switch (message_code) {
     case WM_CREATE: {
@@ -100,6 +102,15 @@ LRESULT MessagesHandler(
       }
 
       SetTimer(window_handle, TIMER_1, 1000, Timer1);
+
+      add_student = CreateWindow(
+          "button", "Add Student",
+          WS_CHILD | WS_VISIBLE | WS_BORDER | BS_PUSHBUTTON,
+          250, 60, 90, 30, window_handle, nullptr, instance_handle, nullptr);
+      add_teacher = CreateWindow(
+          "button", "Add Teacher",
+          WS_CHILD | WS_VISIBLE | WS_BORDER | BS_PUSHBUTTON,
+          250, 100, 90, 30, window_handle, nullptr, instance_handle, nullptr);
 
       InvalidateRect(window_handle, nullptr, true);
     }
@@ -172,6 +183,17 @@ LRESULT MessagesHandler(
         visitor.Clear();
       } else {
         magic = 0;
+      }
+
+      InvalidateRect(window_handle, nullptr, true);
+      break;
+    }
+    case WM_COMMAND : {
+      if (reinterpret_cast<HWND>(l_param) == add_student) {
+        student_queue.AddStudent(std::to_string(1));
+      }
+      if (reinterpret_cast<HWND>(l_param) == add_teacher) {
+        teacher_queue.AddTeacher(std::to_string(1));
       }
 
       InvalidateRect(window_handle, nullptr, true);
